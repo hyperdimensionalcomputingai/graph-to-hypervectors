@@ -1,0 +1,20 @@
+[project]
+name = "graph-to-hypervector"
+version = "0.1.0"
+description = "A step-by-step companion for querying graph nodes and paths with hypervectors"
+readme = "README.md"
+authors = [
+    { name = "prrao87", email = "prrao87@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = ["torch>=2.8,<3", "torch-hd>=5.8,<6", "lancedb>=0.25,<1", "pyarrow>=20,<25"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[project.scripts]
+graph-to-hypervector = "graph_to_hypervector:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
