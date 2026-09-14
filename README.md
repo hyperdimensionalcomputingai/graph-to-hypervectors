@@ -8,11 +8,10 @@ You don't need a graph database or prior experience with HDC. The code here is i
 
 ## Set up
 
-Use Python 3.13 and [uv](https://docs.astral.sh/uv/):
+Use Python 3.13 and [uv](https://docs.astral.sh/uv/) for dependency management:
 
 ```sh
-cd graph-to-hypervector
-uv sync --locked
+uv sync
 ```
 
 TorchHD is distributed as `torch-hd` and imported as `torchhd`. `uv.lock` records the tested dependencies. Everything runs on CPU. No API key is needed, and the categorical lessons don't use an embedding service. The first dependency installation needs internet access.
