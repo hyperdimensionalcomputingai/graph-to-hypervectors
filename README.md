@@ -2,7 +2,7 @@
 
 This is a runnable companion repo to the HDC Labs [blog post on querying connected data with graphs and hypervectors](https://hyperdimensionalcomputing.ai/blog/from-a-property-graph-to-associative-search/).
 
-We work through the story in the blog post one script at a time. We first retrieve **Nina's stored node hypervector** from the cue `eye_color: blue`, then retrieve **Maya** with `eye_color: brown`. We then encode directed paths and query them from partial descriptions. The final lesson brings semantic similarity into those same operations using Ollama.
+We work through the story in the blog post one script at a time. We first retrieve **Nina's stored node hypervector** from the cue `eye_color: blue`, then retrieve **Maya** with `eye_color: brown`. We then encode directed paths and query them from partial descriptions. The final lesson brings semantic similarity into those same operations using a text embedding model that's projected up to hyperspace.
 
 You don't need a graph database or prior experience with HDC. The code here is intended to educate! All source graph records are small Python dictionaries, and we use [LanceDB](https://docs.lancedb.com/) to persist their hypervectors and IDs locally. LanceDB uses PyArrow data types under the hood, and it also provides a graph query engine called [lance-graph](https://github.com/lance-format/lance-graph) to run Cypher queries over the same dataset.
 
