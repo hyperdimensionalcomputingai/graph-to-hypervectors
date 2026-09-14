@@ -1,10 +1,10 @@
 # From graph records to searchable hypervectors
 
-This is a runnable companion to the HDC Labs blog post on querying connected data with graphs and hypervectors. The published article link will be added here later.
+This is a runnable companion repo to the HDC Labs [blog post on querying connected data with graphs and hypervectors](https://hyperdimensionalcomputing.ai/blog/from-a-property-graph-to-associative-search/).
 
-Work through one script at a time. We first retrieve **Nina's stored node hypervector** from the cue `eye_color: blue`, then retrieve **Maya** with `eye_color: brown`. We then encode directed paths and query them from partial descriptions. The final lesson brings semantic similarity into those same operations using Ollama.
+We work through the story in the blog post one script at a time. We first retrieve **Nina's stored node hypervector** from the cue `eye_color: blue`, then retrieve **Maya** with `eye_color: brown`. We then encode directed paths and query them from partial descriptions. The final lesson brings semantic similarity into those same operations using Ollama.
 
-You don't need a graph database server or prior HDC experience. Source graph records are small Python dictionaries; LanceDB persists their hypervectors and IDs locally, and PyArrow defines the tables.
+You don't need a graph database or prior experience with HDC. The code here is intended to educate! All source graph records are small Python dictionaries, and we use [LanceDB](https://docs.lancedb.com/) to persist their hypervectors and IDs locally. LanceDB uses PyArrow data types under the hood, and it also provides a graph query engine called [lance-graph](https://github.com/lance-format/lance-graph) to run Cypher queries over the same dataset.
 
 ## Set up
 
@@ -18,6 +18,8 @@ uv sync --locked
 TorchHD is distributed as `torch-hd` and imported as `torchhd`. `uv.lock` records the tested dependencies. Everything runs on CPU. No API key is needed, and the categorical lessons don't use an embedding service. The first dependency installation needs internet access.
 
 ## The graph we're encoding
+
+We define a toy dataset that is shaped like the following property graph:
 
 ```text
 Maya --MENTORS--> Nina --WORKS_AT--> Cedar Lab
@@ -35,7 +37,7 @@ Omar --MENTORS--> Pedro --WORKS_AT--> Cedar Lab  (added later)
 | Pedro | interests: cooking |
 | Omar/Pedro's edges | Relationship types only; other properties unspecified |
 
-Names and IDs are stored as metadata. Except for Cedar Lab's name in the pattern lesson, they aren't included in the encoded properties. No extra facts are invented for Omar or Pedro. In particular, Omar's empty property description contributes zero to the path; his standalone node has a null vector, which is excluded from cosine search.
+Names and IDs are stored as metadata. Except for Cedar Lab's name in the pattern lesson, they aren't included in the encoded properties. No extra facts are invented for the added records for Omar or Pedro. In particular, Omar's empty property description has a zero contribution to the path query, because his standalone node has a null hypervector, which is excluded from cosine search.
 
 ## Read and run in this order
 
@@ -169,16 +171,16 @@ IDs and path positions are separate. An edge keeps its stored ID and local posit
 
 Rerun steps 1 and 4 to restore the initial four tables. Encoding lessons replace only their named tables. Use `GRAPH_HV_DB=/some/other/directory` for an isolated experiment.
 
-## 7. Add semantic values with Ollama
+## 7. Add semantic values with text embedding models
 
-Start your local Ollama service, then make sure the requested model is present:
+In this repo, we use a local Ollama service to pull the `nomic-embed-text` text embedding model. However, you can replace this part of the code with any model of your choice (e.g., `sentence-transformers`).
 
 ```sh
 ollama pull nomic-embed-text
 uv run python lessons/query_related_meanings.py
 ```
 
-Model download requires internet; inference is local. Set `OLLAMA_HOST` to a full base URL if your service isn't at `http://localhost:11434`. No sentence-transformers dependency is used.
+The initial model download requires internet, but all inference is done locally once the model is installed. Set `OLLAMA_HOST` to a full base URL if your service isn't at `http://localhost:11434`. External embedding model providers can use a similar approach.
 
 `semantic.py` calls Ollama's `/api/embed` endpoint. For symmetric comparisons, every phrase gets the same `clustering: ` prefix. The tested model produced 768-dimensional embeddings. The script reads the actual dimension rather than assuming it.
 
@@ -218,7 +220,7 @@ Similarity suggests candidates. Exact graph checks can establish whether a requi
 uv run pytest -q
 ```
 
-Tests use a temporary database and don't require Ollama. Run the semantic lesson for the real-model integration check. No local server is started or stopped by these scripts.
+Tests use a temporary database and don't require a running Ollama server. Run the semantic lesson for the real-model integration check. No local server is started or stopped by these scripts.
 
 References: [TorchHD MAP](https://torchhd.readthedocs.io/en/stable/generated/torchhd.MAPTensor.html), [LanceDB vector search](https://docs.lancedb.com/search/vector-search), [PyArrow schemas](https://arrow.apache.org/docs/python/generated/pyarrow.schema.html), and [Ollama embeddings](https://docs.ollama.com/api/embed).
 # graph-to-hypervectors
